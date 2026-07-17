@@ -2,9 +2,11 @@ include .env
 export
 
 export PROJECT_ROOT := $(shell pwd)
+export CURRENT_USER_HOST := $(shell id -u):$(shell id -g)
 
 env-up:
-	@docker compose up todo-app-postgres -d
+	@mkdir -p out/pgdata
+	docker compose up todo-app-postgres -d
 
 env-down:
 	@docker compose down todo-app-postgres
@@ -51,3 +53,8 @@ migrate-up:
 
 migrate-down:
 	@make migrate-action action=down
+
+todo-app-run:
+	@export LOGGER_FOLDER=${PROJECT_ROOT}/out/logs && \
+	go mod tidy && \
+	go run cmd/todoapp/main.go

@@ -1,9 +1,8 @@
 CREATE SCHEMA todo_app;
 
 CREATE TABLE todo_app.users (
-    id              UUID                            PRIMARY KEY,
+    id              UUID                        PRIMARY KEY,
     version         BIGINT          NOT NULL    DEFAULT 1,
-    name            VARCHAR(100)    NOT NULL,
     first_name      VARCHAR(100)    NOT NULL    CHECK(char_length(first_name) BETWEEN 3 AND 100),
     last_name       VARCHAR(100)    NOT NULL    CHECK(char_length(last_name) BETWEEN 3 AND 100),
     phone_number    VARCHAR(15)                 CHECK(
