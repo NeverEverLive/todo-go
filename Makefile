@@ -14,8 +14,8 @@ env-down:
 env-drop:
 	@read -p "Are you sure you want to drop the database? (y/n): " ans; \
 	if [ "$$ans" = "y" ]; then \
-		docker compose down todo-app-postgres && \
-		sudo rm -rf out/pgdata && \
+		docker compose down todo-app-postgres port-forwarder && \
+		rm -rf out/pgdata && \
 		echo "Database dropped"; \
 	else \
 		echo "Operation aborted"; \
@@ -56,5 +56,6 @@ migrate-down:
 
 todo-app-run:
 	@export LOGGER_FOLDER=${PROJECT_ROOT}/out/logs && \
+	export POSTGRES_HOST=localhost && \
 	go mod tidy && \
 	go run cmd/todoapp/main.go

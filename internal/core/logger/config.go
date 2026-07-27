@@ -10,8 +10,8 @@ import (
 type Config struct {
 	Level 				string 		`envconfig:"LEVEL" required:"true"`
 	Folder 				string		`envconfig:"FOLDER" required:"true"`
-	FolderPermission	os.FileMode `envconfig:"FOLDER_PERMISSION, default=0755"`
-	FilePermission 		os.FileMode `envconfig:"FILE_PERMISSION, default=0644"`
+	FolderPermission	os.FileMode `envconfig:"FOLDER_PERMISSION" default:"0755"`
+	FilePermission 		os.FileMode `envconfig:"FILE_PERMISSION" default:"0644"`
 }
 
 func NewConfig() (Config, error) {
