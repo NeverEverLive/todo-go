@@ -2,6 +2,7 @@ include .env
 export
 
 export PROJECT_ROOT := $(shell pwd)
+export CURRENT_USER_HOST := $(shell id -u):$(shell id -g)
 
 env-up:
 	@docker compose up todo-app-postgres -d
@@ -12,8 +13,8 @@ env-down:
 env-drop:
 	@read -p "Are you sure you want to drop the database? (y/n): " ans; \
 	if [ "$$ans" = "y" ]; then \
-		docker compose down todo-app-postgres && \
-		sudo rm -rf out/pgdata && \
+		docker compose down todo-app-postgres port-forwarder && \
+		rm -rf ${PROJECT_ROOT}/out/pgdata && \
 		echo "Database dropped"; \
 	else \
 		echo "Operation aborted"; \
@@ -51,3 +52,9 @@ migrate-up:
 
 migrate-down:
 	@make migrate-action action=down
+
+todo-app-run:
+	@export LOGGER_FOLDER=${PROJECT_ROOT}/out/logs && \
+	export POSTGRES_HOST=localhost && \
+	go mod tidy && \
+	go run ${PROJECT_ROOT}/cmd/todoapp/main.go
