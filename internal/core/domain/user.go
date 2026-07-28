@@ -77,7 +77,8 @@ func (u *User) Validate() error {
 			)
 		}
 
-		re := regexp.MustCompile(`^[0-9]+$`)
+		// validate phone by reg ex ^+[0-9]+$
+		re := regexp.MustCompile(`^\+[0-9]+$`)
 
 		if !re.MatchString(*u.PhoneNumber) {
 			return fmt.Errorf(
@@ -91,11 +92,22 @@ func (u *User) Validate() error {
 	return nil
 }
 
-
 type UserPatch struct {
 	FirstName   Nullable[string]
 	LastName    Nullable[string]
 	PhoneNumber Nullable[string]
+}
+
+func NewUserPatch(
+	firstName Nullable[string],
+	lastName Nullable[string],
+	phoneNumber Nullable[string],
+) UserPatch {
+	return UserPatch{
+		FirstName:   firstName,
+		LastName:    lastName,
+		PhoneNumber: phoneNumber,
+	}
 }
 
 func (p *UserPatch) Validate() error {

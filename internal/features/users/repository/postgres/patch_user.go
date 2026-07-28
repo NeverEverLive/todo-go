@@ -7,7 +7,7 @@ import (
 
 	"github.com/NeverEverLive/todo-go/internal/core/domain"
 	core_errors "github.com/NeverEverLive/todo-go/internal/core/errors"
-	"github.com/jackc/pgx/v5"
+	core_postgres_pool "github.com/NeverEverLive/todo-go/internal/core/repository/postgres/pool"
 )
 
 func (r *UsersRepository) PatchUser(
@@ -23,7 +23,7 @@ func (r *UsersRepository) PatchUser(
 		SET
 			first_name = $3,
 			last_name = $4,
-			phone_number = $5
+			phone_number = $5,
 			version = version + 1
 		WHERE id = $1 and version = $2
 		RETURNING id, version, first_name, last_name, phone_number;
@@ -48,7 +48,7 @@ func (r *UsersRepository) PatchUser(
 		&userModel.PhoneNumber,
 	)
 	if err != nil {
-		if errors.Is(err, pgx.ErrNoRows) {
+		if errors.Is(err, core_postgres_pool.ErrNoRows) {
 			return domain.User{}, fmt.Errorf(
 				"user concurrently accessed: %w",
 				core_errors.ErrConflict,

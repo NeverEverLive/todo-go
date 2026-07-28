@@ -11,9 +11,7 @@ import (
 	core_http_request "github.com/NeverEverLive/todo-go/internal/core/transport/http/request"
 	core_http_response "github.com/NeverEverLive/todo-go/internal/core/transport/http/response"
 	core_http_types "github.com/NeverEverLive/todo-go/internal/core/transport/http/types"
-	core_http_utils "github.com/NeverEverLive/todo-go/internal/core/transport/http/utils"
 )
-
 
 type PatchUserRequest struct {
 	PhoneNumber core_http_types.Nullable[string] `json:"phone_number"`
@@ -21,12 +19,11 @@ type PatchUserRequest struct {
 	LastName    core_http_types.Nullable[string] `json:"last_name"`
 }
 
-
 func (r *PatchUserRequest) Validate() error {
 	if r.FirstName.Set {
 		if r.FirstName.Value == nil {
 			return fmt.Errorf(
-				"'FirstName' can't be NULL: %w", 
+				"'FirstName' can't be NULL: %w",
 				core_errors.ErrInvalidArgument,
 			)
 		}
@@ -44,7 +41,7 @@ func (r *PatchUserRequest) Validate() error {
 	if r.LastName.Set {
 		if r.LastName.Value == nil {
 			return fmt.Errorf(
-				"'LastName' can't be NULL: %w", 
+				"'LastName' can't be NULL: %w",
 				core_errors.ErrInvalidArgument,
 			)
 		}
@@ -84,7 +81,6 @@ func (r *PatchUserRequest) Validate() error {
 	return nil
 }
 
-
 type PatchUserResponse UserDTOResponse
 
 func (h *UsersHTTPHandler) PatchUser(
@@ -95,7 +91,7 @@ func (h *UsersHTTPHandler) PatchUser(
 	logger := core_logger.FromContext(ctx)
 	responseHandler := core_http_response.NewHTTPResponseHandler(logger, rw)
 
-	userId, err := core_http_utils.GetPathParam(r, "id")
+	userId, err := core_http_request.GetPathParam(r, "id")
 	if err != nil {
 		responseHandler.ErrorResponse(err, "failed to get 'id' path param")
 		return
@@ -120,11 +116,10 @@ func (h *UsersHTTPHandler) PatchUser(
 	responseHandler.JSONResponse(response, http.StatusOK)
 }
 
-
 func userPatchFromRequest(request PatchUserRequest) domain.UserPatch {
-	return domain.UserPatch{
-		FirstName:   request.FirstName.ToDomain(),
-		LastName:    request.LastName.ToDomain(),
-		PhoneNumber: request.PhoneNumber.ToDomain(),
-	}
+	return domain.NewUserPatch(
+		request.FirstName.ToDomain(),
+		request.LastName.ToDomain(),
+		request.PhoneNumber.ToDomain(),
+	)
 }

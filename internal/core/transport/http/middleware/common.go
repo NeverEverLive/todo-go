@@ -1,7 +1,6 @@
 package core_http_middleware
 
 import (
-	"context"
 	"net/http"
 	"time"
 
@@ -41,7 +40,7 @@ func Logger(log *core_logger.Logger) Middleware {
 				zap.String("url", r.URL.String()),
 			)
 
-			ctx := context.WithValue(r.Context(), "log", l)
+			ctx := core_logger.ToContext(r.Context(), l)
 
 			next.ServeHTTP(w, r.WithContext(ctx))
 		})
@@ -57,7 +56,7 @@ func Panic() Middleware {
 			defer func() {
 				if p := recover(); p != nil {
 					responseHandler.PanicResponse(
-						p, 
+						p,
 						"during handle HTTP request got unexpected panic",
 					)
 				}
@@ -87,7 +86,7 @@ func Trace() Middleware {
 			log.Debug(
 				"<<< done HTTP request",
 				zap.String("method", r.Method),
-				zap.Int("status_code", rw.GetStatusCodeOrPanic()),
+				zap.Int("status_code", rw.GetStatusCode()),
 				zap.Duration("latency", time.Since(startTime)),
 			)
 		})
