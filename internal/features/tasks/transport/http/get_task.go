@@ -1,4 +1,4 @@
-package users_transport_http
+package tasks_transport_http
 
 import (
 	"net/http"
@@ -8,29 +8,34 @@ import (
 	core_http_response "github.com/NeverEverLive/todo-go/internal/core/transport/http/response"
 )
 
-type GetUsersResponse []UserDTOResponse
+type GetTaskResponse TaskDTOResponse
 
-func (h *UsersHTTPHandler) GetUsers(
-	rw http.ResponseWriter,
-	r *http.Request,
-) {
+func (h *TasksHTTPHandler) GetTask(rw http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	logger := core_logger.FromContext(ctx)
 	responseHandler := core_http_response.NewHTTPResponseHandler(logger, rw)
 
-	limit, offset, err := core_http_request.GetLimitOffsetQueryParams(r)
+	taskID, err := core_http_request.GetPathParam(r, "id")
 	if err != nil {
-		responseHandler.ErrorResponse(err, "failed to get limit/offset query param")
+		responseHandler.ErrorResponse(
+			err,
+			"failed to get task id",
+		)
+
 		return
 	}
 
-	userDomains, err := h.usersService.GetUsers(ctx, limit, offset)
+	taskDomain, err := h.tasksService.GetTask(ctx, taskID)
 	if err != nil {
-		responseHandler.ErrorResponse(err, "failed to get users")
+		responseHandler.ErrorResponse(
+			err,
+			"failed to get task",
+		)
+
 		return
 	}
 
-	response := GetUsersResponse(usersDTOFromDomains(userDomains))
+	response := GetTaskResponse(taskDTOFromDomain(taskDomain))
 
 	responseHandler.JSONResponse(response, http.StatusOK)
 }

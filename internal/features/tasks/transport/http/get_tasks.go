@@ -1,4 +1,4 @@
-package users_transport_http
+package tasks_transport_http
 
 import (
 	"net/http"
@@ -8,12 +8,9 @@ import (
 	core_http_response "github.com/NeverEverLive/todo-go/internal/core/transport/http/response"
 )
 
-type GetUsersResponse []UserDTOResponse
+type GetTasksResponse []TaskDTOResponse
 
-func (h *UsersHTTPHandler) GetUsers(
-	rw http.ResponseWriter,
-	r *http.Request,
-) {
+func (h *TasksHTTPHandler) GetTasks(rw http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	logger := core_logger.FromContext(ctx)
 	responseHandler := core_http_response.NewHTTPResponseHandler(logger, rw)
@@ -23,14 +20,22 @@ func (h *UsersHTTPHandler) GetUsers(
 		responseHandler.ErrorResponse(err, "failed to get limit/offset query param")
 		return
 	}
-
-	userDomains, err := h.usersService.GetUsers(ctx, limit, offset)
+	userID := getUserIDQueryParam(r)
+	tasksDomains, err := h.tasksService.GetTasks(ctx, userID, limit, offset)
 	if err != nil {
-		responseHandler.ErrorResponse(err, "failed to get users")
+		responseHandler.ErrorResponse(err, "failed to get tasks")
 		return
 	}
 
-	response := GetUsersResponse(usersDTOFromDomains(userDomains))
+	response := GetTasksResponse(tasksDTOFromDomains(tasksDomains))
 
 	responseHandler.JSONResponse(response, http.StatusOK)
+}
+
+func getUserIDQueryParam(r *http.Request) *string {
+	const (
+		userIDQueryParamKey = "user_id"
+	)
+	return core_http_request.GetQueryParams(r, userIDQueryParamKey)
+
 }

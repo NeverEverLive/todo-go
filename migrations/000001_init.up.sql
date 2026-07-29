@@ -15,7 +15,7 @@ CREATE TABLE todo_app.users (
 );
 
 CREATE TABLE todo_app.tasks (
-    id              UUID                        PRIMARY KEY,
+    id              UUID                        PRIMARY KEY DEFAULT gen_random_uuid(),
     version         BIGINT          NOT NULL    DEFAULT 1,
     title           VARCHAR(100)    NOT NULL    CHECK (char_length(title) BETWEEN 1 AND 100),
     description     VARCHAR(1000)               CHECK (char_length(description) BETWEEN 1 AND 1000),
