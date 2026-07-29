@@ -58,3 +58,12 @@ todo-app-run:
 	export POSTGRES_HOST=localhost && \
 	go mod tidy && \
 	go run ${PROJECT_ROOT}/cmd/todoapp/main.go
+
+logs-cleanup:
+	@read -p "Are you sure you want to clean all logs? (y/n): " ans; \
+    	if [ "$$ans" = "y" ]; then \
+    		rm -rf ${PROJECT_ROOT}/out/logs && \
+    		echo "Logs cleaned"; \
+    	else \
+    		echo "Operation aborted"; \
+    	fi
