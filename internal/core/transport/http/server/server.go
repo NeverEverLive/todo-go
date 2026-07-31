@@ -6,15 +6,17 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/NeverEverLive/todo-go/docs"
 	core_logger "github.com/NeverEverLive/todo-go/internal/core/logger"
 	core_http_middleware "github.com/NeverEverLive/todo-go/internal/core/transport/http/middleware"
+	"github.com/swaggo/http-swagger"
 	"go.uber.org/zap"
 )
 
 type HTTPServer struct {
-	mux *http.ServeMux
+	mux    *http.ServeMux
 	config Config
-	log *core_logger.Logger
+	log    *core_logger.Logger
 
 	middleware []core_http_middleware.Middleware
 }
@@ -25,10 +27,10 @@ func NewHTTPServer(
 	middleware ...core_http_middleware.Middleware,
 ) *HTTPServer {
 	return &HTTPServer{
-		mux: http.NewServeMux(),
+		mux:        http.NewServeMux(),
 		middleware: middleware,
-		config: config,
-		log: log,
+		config:     config,
+		log:        log,
 	}
 }
 
@@ -39,7 +41,7 @@ func (s *HTTPServer) Run(ctx context.Context) error {
 	)
 
 	server := &http.Server{
-		Addr: s.config.Addr,
+		Addr:    s.config.Addr,
 		Handler: mux,
 	}
 
@@ -91,4 +93,22 @@ func (s *HTTPServer) RegisterAPIRouters(routers ...*APIVersionRouter) {
 			http.StripPrefix(prefix, router.WithMiddleware()),
 		)
 	}
+}
+
+func (s *HTTPServer) RegisterSwagger() {
+	s.mux.Handle(
+		"/swagger/",
+		httpSwagger.Handler(
+			httpSwagger.URL("/swagger/doc.json"),
+		),
+	)
+
+	s.mux.HandleFunc(
+		"/swagger/doc.json",
+		func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusOK)
+			_, _ = w.Write([]byte(docs.SwaggerInfo.ReadDoc()))
+		},
+	)
 }

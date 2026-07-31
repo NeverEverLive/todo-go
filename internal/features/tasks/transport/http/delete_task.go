@@ -8,6 +8,18 @@ import (
 	core_http_response "github.com/NeverEverLive/todo-go/internal/core/transport/http/response"
 )
 
+// DeleteTask godoc
+// @Summary Delete task
+// @Description Delete a task by ID
+// @Tags tasks
+// @Accept json
+// @Produce json
+// @Param id path string true "Task ID" format(uuid)
+// @Success 204 "Successfully deleted task"
+// @Failure 400 {object} core_http_response.ErrorResponse "Bad request"
+// @Failure 404 {object} core_http_response.ErrorResponse "Task not found"
+// @Failure 500 {object} core_http_response.ErrorResponse "Internal server error"
+// @Router /tasks/{id} [delete]
 func (h *TasksHTTPHandler) DeleteTask(rw http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	logger := core_logger.FromContext(ctx)

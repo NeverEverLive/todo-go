@@ -12,9 +12,9 @@ import (
 )
 
 type PatchTaskRequest struct {
-	Title       core_http_types.Nullable[string] `json:"title"`
-	Description core_http_types.Nullable[string] `json:"description"`
-	Completed   core_http_types.Nullable[bool]   `json:"completed"`
+	Title       core_http_types.Nullable[string] `json:"title" swaggertype:"string" minLength:"1" maxLength:"100" example:"Learn Go"`
+	Description core_http_types.Nullable[string] `json:"description" swaggertype:"string" minLength:"1" maxLength:"1000" example:"Read the net/http documentation" extensions:"x-nullable"`
+	Completed   core_http_types.Nullable[bool]   `json:"completed" swaggertype:"boolean" example:"true"`
 }
 
 type PatchTaskResponse TaskDTOResponse
@@ -49,6 +49,20 @@ func (r *PatchTaskRequest) Validate() error {
 	return nil
 }
 
+// PatchTask godoc
+// @Summary Patch task
+// @Description Partially update a task by ID
+// @Tags tasks
+// @Accept json
+// @Produce json
+// @Param id path string true "Task ID" format(uuid)
+// @Param request body PatchTaskRequest true "PatchTask request body"
+// @Success 200 {object} PatchTaskResponse "Successfully updated task"
+// @Failure 400 {object} core_http_response.ErrorResponse "Bad request"
+// @Failure 404 {object} core_http_response.ErrorResponse "Task not found"
+// @Failure 409 {object} core_http_response.ErrorResponse "Conflict"
+// @Failure 500 {object} core_http_response.ErrorResponse "Internal server error"
+// @Router /tasks/{id} [patch]
 func (h *TasksHTTPHandler) PatchTask(rw http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	logger := core_logger.FromContext(ctx)
