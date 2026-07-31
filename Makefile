@@ -67,3 +67,12 @@ logs-cleanup:
     	else \
     		echo "Operation aborted"; \
     	fi
+
+todo-app-deploy:
+	@docker compose up todo-app -d --build
+
+todo-app-stop:
+	@docker compose down todo-app
+
+ps:
+	@docker compose ps
