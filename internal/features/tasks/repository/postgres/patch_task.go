@@ -47,7 +47,7 @@ func (r *TasksRepository) PatchTask(
 		&taskModel.Title,
 		&taskModel.Description,
 		&taskModel.Completed,
-		&taskModel.CompletedAt,
+		&taskModel.CreatedAt,
 		&taskModel.CompletedAt,
 		&taskModel.AuthorUserID,
 	)

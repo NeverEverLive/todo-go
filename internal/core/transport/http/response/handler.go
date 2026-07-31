@@ -13,7 +13,7 @@ import (
 
 type HTTPResponseHandler struct {
 	log *core_logger.Logger
-	rw http.ResponseWriter
+	rw  http.ResponseWriter
 }
 
 func NewHTTPResponseHandler(
@@ -31,9 +31,9 @@ func (h *HTTPResponseHandler) errorResponse(
 	err error,
 	msg string,
 ) {
-	response := map[string]string {
-		"message": msg,
-		"error": err.Error(),
+	response := ErrorResponse{
+		Error:   err.Error(),
+		Message: msg,
 	}
 
 	h.JSONResponse(
@@ -57,22 +57,22 @@ func (h *HTTPResponseHandler) PanicResponse(p any, msg string) {
 func (h *HTTPResponseHandler) ErrorResponse(err error, msg string) {
 	var (
 		statusCode int
-		logFunc func(string, ...zap.Field)
+		logFunc    func(string, ...zap.Field)
 	)
 
 	switch {
-		case errors.Is(err, core_errors.ErrInvalidArgument):
-			statusCode = http.StatusBadRequest
-			logFunc = h.log.Warn
-		case errors.Is(err, core_errors.ErrNotFound):
-			statusCode = http.StatusNotFound
-			logFunc = h.log.Debug
-		case errors.Is(err, core_errors.ErrConflict):
-			statusCode = http.StatusConflict
-			logFunc = h.log.Warn
-		default:
-			statusCode = http.StatusInternalServerError
-			logFunc = h.log.Error
+	case errors.Is(err, core_errors.ErrInvalidArgument):
+		statusCode = http.StatusBadRequest
+		logFunc = h.log.Warn
+	case errors.Is(err, core_errors.ErrNotFound):
+		statusCode = http.StatusNotFound
+		logFunc = h.log.Debug
+	case errors.Is(err, core_errors.ErrConflict):
+		statusCode = http.StatusConflict
+		logFunc = h.log.Warn
+	default:
+		statusCode = http.StatusInternalServerError
+		logFunc = h.log.Error
 	}
 
 	logFunc(msg, zap.Error(err))

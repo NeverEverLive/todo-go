@@ -24,6 +24,19 @@ type queryParams struct {
 	dateTo   *time.Time
 }
 
+// GetStatistics godoc
+// @Summary Get task statistics
+// @Description Get task statistics filtered by optional user and date range
+// @Tags statistics
+// @Accept json
+// @Produce json
+// @Param user_id query string false "User ID"
+// @Param date_from query string false "Start date in YYYY-MM-DD format" format(date)
+// @Param date_to query string false "End date in YYYY-MM-DD format" format(date)
+// @Success 200 {object} GetStatisticsResponse "Successfully retrieved statistics"
+// @Failure 400 {object} core_http_response.ErrorResponse "Bad request"
+// @Failure 500 {object} core_http_response.ErrorResponse "Internal server error"
+// @Router /statistics [get]
 func (h *StatisticsHTTPHandler) GetStatistics(rw http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	logger := core_logger.FromContext(ctx)
@@ -35,6 +48,8 @@ func (h *StatisticsHTTPHandler) GetStatistics(rw http.ResponseWriter, r *http.Re
 			err,
 			"failed to get userID/dateFrom/dateTo query params",
 		)
+
+		return
 	}
 
 	statistics, err := h.statisticsService.GetStatistics(
@@ -48,6 +63,8 @@ func (h *StatisticsHTTPHandler) GetStatistics(rw http.ResponseWriter, r *http.Re
 			err,
 			"failed to get statistics",
 		)
+
+		return
 	}
 
 	response := toDTOFromDomain(statistics)

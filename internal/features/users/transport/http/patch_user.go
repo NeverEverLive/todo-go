@@ -14,9 +14,9 @@ import (
 )
 
 type PatchUserRequest struct {
-	PhoneNumber core_http_types.Nullable[string] `json:"phone_number"`
-	FirstName   core_http_types.Nullable[string] `json:"first_name"`
-	LastName    core_http_types.Nullable[string] `json:"last_name"`
+	PhoneNumber core_http_types.Nullable[string] `json:"phone_number" swaggertype:"string" minLength:"10" maxLength:"15" example:"+79998887766" extensions:"x-nullable"`
+	FirstName   core_http_types.Nullable[string] `json:"first_name" swaggertype:"string" minLength:"3" maxLength:"100" example:"Ivan"`
+	LastName    core_http_types.Nullable[string] `json:"last_name" swaggertype:"string" minLength:"3" maxLength:"100" example:"Ivanov"`
 }
 
 func (r *PatchUserRequest) Validate() error {
@@ -83,6 +83,20 @@ func (r *PatchUserRequest) Validate() error {
 
 type PatchUserResponse UserDTOResponse
 
+// PatchUser godoc
+// @Summary Patch user
+// @Description Partially update a user by ID
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param id path string true "User ID"
+// @Param request body PatchUserRequest true "PatchUser request body"
+// @Success 200 {object} PatchUserResponse "Successfully updated user"
+// @Failure 400 {object} core_http_response.ErrorResponse "Bad request"
+// @Failure 404 {object} core_http_response.ErrorResponse "User not found"
+// @Failure 409 {object} core_http_response.ErrorResponse "Conflict"
+// @Failure 500 {object} core_http_response.ErrorResponse "Internal server error"
+// @Router /users/{id} [patch]
 func (h *UsersHTTPHandler) PatchUser(
 	rw http.ResponseWriter,
 	r *http.Request,

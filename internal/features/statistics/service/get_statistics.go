@@ -15,10 +15,10 @@ func (s *StatisticsService) GetStatistics(
 	dateFrom *time.Time,
 	dateTo *time.Time,
 ) (domain.Statistics, error) {
-	if dateFrom != nil || dateTo != nil {
+	if dateFrom != nil && dateTo != nil {
 		if dateFrom.After(*dateTo) || dateFrom.Equal(*dateTo) {
 			return domain.Statistics{}, fmt.Errorf(
-				"`date_from` must be after `date_to`",
+				"`date_from` must be after `date_to`: %w",
 				core_errors.ErrInvalidArgument,
 			)
 		}
