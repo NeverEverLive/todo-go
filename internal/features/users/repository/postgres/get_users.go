@@ -23,7 +23,7 @@ func (r *UsersRepository) GetUsers(
 			last_name,
 			phone_number
 		FROM todo_app.users
-		ORDER BY id ASC
+		ORDER BY id
 		LIMIT $1
 		OFFSET $2;
 	`
@@ -56,7 +56,7 @@ func (r *UsersRepository) GetUsers(
 		return nil, fmt.Errorf("next rows: %w", err)
 	}
 
-	userDomains := UserDomainsFromModels(userModels)
+	userDomains := userDomainsFromModels(userModels)
 
 	return userDomains, nil
 }

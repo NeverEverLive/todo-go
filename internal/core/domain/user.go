@@ -7,10 +7,9 @@ import (
 	core_errors "github.com/NeverEverLive/todo-go/internal/core/errors"
 )
 
-
 type User struct {
-	ID          string
-	Version     int
+	ID      string
+	Version int
 
 	FirstName   string
 	LastName    string
@@ -25,14 +24,13 @@ func NewUser(
 	phoneNumber *string,
 ) User {
 	return User{
-		ID: id,
-		Version: version,
-		FirstName: firstName,
-		LastName: lastName,
+		ID:          id,
+		Version:     version,
+		FirstName:   firstName,
+		LastName:    lastName,
 		PhoneNumber: phoneNumber,
 	}
 }
-	
 
 func NewUserUninitialized(
 	firstName string,
@@ -52,7 +50,7 @@ func (u *User) Validate() error {
 	firstNameLength := len([]rune(u.FirstName))
 	if firstNameLength < 3 || firstNameLength > 100 {
 		return fmt.Errorf(
-			"Invalid `FirstName` length: %d. %w",
+			"invalid `FirstName` length: %d. %w",
 			firstNameLength,
 			core_errors.ErrInvalidArgument,
 		)
@@ -61,7 +59,7 @@ func (u *User) Validate() error {
 	lastNameLength := len([]rune(u.LastName))
 	if lastNameLength < 3 || lastNameLength > 100 {
 		return fmt.Errorf(
-			"Invalid `LastName` length: %d. %w",
+			"invalid `LastName` length: %d. %w",
 			lastNameLength,
 			core_errors.ErrInvalidArgument,
 		)
@@ -71,7 +69,7 @@ func (u *User) Validate() error {
 		phoneNumberLength := len([]rune(*u.PhoneNumber))
 		if phoneNumberLength < 10 || phoneNumberLength > 15 {
 			return fmt.Errorf(
-				"Invalid `PhoneNumber` length: %d. %w",
+				"invalid `PhoneNumber` length: %d. %w",
 				phoneNumberLength,
 				core_errors.ErrInvalidArgument,
 			)
@@ -82,7 +80,7 @@ func (u *User) Validate() error {
 
 		if !re.MatchString(*u.PhoneNumber) {
 			return fmt.Errorf(
-				"Invalid `PhoneNumber` format: %s. %w",
+				"invalid `PhoneNumber` format: %s. %w",
 				*u.PhoneNumber,
 				core_errors.ErrInvalidArgument,
 			)
@@ -113,14 +111,14 @@ func NewUserPatch(
 func (p *UserPatch) Validate() error {
 	if p.FirstName.Set && p.FirstName.Value == nil {
 		return fmt.Errorf(
-			"'FirstName' can't be patched to NULL: %w", 
+			"'FirstName' can't be patched to NULL: %w",
 			core_errors.ErrInvalidArgument,
 		)
 	}
 
 	if p.LastName.Set && p.LastName.Value == nil {
 		return fmt.Errorf(
-			"'LastName' can't be patched to NULL: %w", 
+			"'LastName' can't be patched to NULL: %w",
 			core_errors.ErrInvalidArgument,
 		)
 	}
