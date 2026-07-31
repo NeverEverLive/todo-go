@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"time"
 
 	core_errors "github.com/NeverEverLive/todo-go/internal/core/errors"
 )
@@ -19,7 +20,9 @@ func GetQueryParams(r *http.Request, key string) *string {
 
 func GetIntQueryParams(r *http.Request, key string) (*int, error) {
 	param := GetQueryParams(r, key)
-	if param == nil { return nil, nil}
+	if param == nil {
+		return nil, nil
+	}
 
 	intParam, err := strconv.Atoi(*param)
 	if err != nil {
@@ -33,6 +36,25 @@ func GetIntQueryParams(r *http.Request, key string) (*int, error) {
 	}
 
 	return &intParam, nil
+}
+
+func GetDateQueryParam(r *http.Request, key string) (*time.Time, error) {
+	param := GetQueryParams(r, key)
+	if param == nil {
+		return nil, nil
+	}
+
+	dateParam, err := time.Parse(time.DateOnly, *param)
+	if err != nil {
+		return nil, fmt.Errorf(
+			"param='%s' by key='%s' not a valid date: %v. %w",
+			param,
+			key,
+			err,
+			core_errors.ErrInvalidArgument)
+	}
+
+	return &dateParam, nil
 }
 
 func GetLimitOffsetQueryParams(r *http.Request) (*int, *int, error) {
